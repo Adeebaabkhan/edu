@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Slip Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #preview {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Salary Slip Generator</h2>
+        <input type="text" id="name" placeholder="Employee Name" required>
+        <input type="number" id="earnings" placeholder="Total Earnings" required>
+        <input type="number" id="deductions" placeholder="Total Deductions" required>
+        <button id="generateSlip">Generate Salary Slip</button>
+        <button id="exportPDF">Export to PDF</button>
+        
+        <div id="preview">
+            <h3>Salary Slip Preview</h3>
+            <p id="slipOutput"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generateSlip').onclick = function() {
+            const name = document.getElementById('name').value;
+            const earnings = parseFloat(document.getElementById('earnings').value);
+            const deductions = parseFloat(document.getElementById('deductions').value);
+            const netSalary = earnings - deductions;
+
+            document.getElementById('slipOutput').innerHTML = `
+                <strong>Name:</strong> ${name}<br>
+                <strong>Total Earnings:</strong> $${earnings.toFixed(2)}<br>
+                <strong>Total Deductions:</strong> $${deductions.toFixed(2)}<br>
+                <strong>Net Salary:</strong> $${netSalary.toFixed(2)}
+            `;
+        };
+
+        document.getElementById('exportPDF').onclick = function() {
+            // PDF export logic will go here
+            alert("PDF export functionality is not implemented yet.");
+        };
+    </script>
+</body>
+</html>
