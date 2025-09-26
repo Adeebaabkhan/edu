@@ -5,358 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tuition Fee Receipt Generator</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            min-height: calc(100vh - 40px);
-        }
-
-        .form-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .preview-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #667eea;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-row-triple {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
-
-        .section-title {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #333;
-            margin: 25px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .fee-item {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
-            align-items: end;
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #f8f9ff;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        /* Receipt Styles */
-        .receipt {
-            background: white;
-            border: 2px solid #333;
-            font-family: 'Times New Roman', serif;
-            font-size: 14px;
-            line-height: 1.4;
-            color: #000;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .receipt-header {
-            text-align: center;
-            padding: 20px;
-            border-bottom: 2px solid #333;
-            background: #f8f9fa;
-        }
-
-        .school-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #1a365d;
-        }
-
-        .school-affiliation {
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: #666;
-        }
-
-        .school-address {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .receipt-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 15px 0;
-            text-decoration: underline;
-        }
-
-        .receipt-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .receipt-info-item {
-            margin-bottom: 8px;
-        }
-
-        .receipt-info-label {
-            font-weight: bold;
-            display: inline-block;
-            width: 140px;
-        }
-
-        .student-info {
-            padding: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .fee-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        .fee-table th,
-        .fee-table td {
-            border: 1px solid #333;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .fee-table th {
-            background: #f0f0f0;
-            font-weight: bold;
-        }
-
-        .fee-table .amount {
-            text-align: right;
-        }
-
-        .total-row {
-            font-weight: bold;
-            background: #f8f9fa;
-        }
-
-        .receipt-footer {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
-
-        .signature-section {
-            text-align: center;
-        }
-
-        .signature-line {
-            border-top: 1px solid #333;
-            margin-top: 50px;
-            padding-top: 5px;
-            font-size: 12px;
-        }
-
-        .contact-info {
-            font-size: 11px;
-            text-align: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-top: 1px solid #ddd;
-        }
-
-        /* Currency and number formatting */
-        .currency-symbol {
-            font-weight: bold;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .form-row,
-            .form-row-triple {
-                grid-template-columns: 1fr;
-            }
-            
-            .fee-item {
-                grid-template-columns: 1fr;
-            }
-            
-            .receipt-info {
-                grid-template-columns: 1fr;
-            }
-            
-            .receipt-footer {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            
-            .main-container {
-                display: block;
-            }
-            
-            .form-section {
-                display: none;
-            }
-            
-            .preview-section {
-                box-shadow: none;
-                border-radius: 0;
-                padding: 0;
-            }
-            
-            .receipt {
-                border: 2px solid #000;
-                max-width: none;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .main-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-height: calc(100vh - 40px); }
+        .form-section, .preview-section { background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); padding: 30px; overflow-y: auto; }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; font-size: 2.5em; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 14px; transition: all 0.3s ease; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-row-triple { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .section-title { font-size: 1.3em; font-weight: 700; color: #333; margin: 25px 0 15px 0; padding-bottom: 8px; border-bottom: 3px solid #667eea; }
+        .fee-item { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; align-items: end; margin-bottom: 15px; padding: 15px; background: #f8f9ff; border-radius: 8px; border-left: 4px solid #667eea; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin: 5px; }
+        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; transform: translateY(-2px); }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; transform: translateY(-2px); }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+        .receipt { background: white; border: 2px solid #333; font-family: 'Times New Roman', serif; font-size: 14px; line-height: 1.4; color: #000; max-width: 800px; margin: 0 auto; }
+        .receipt-header { text-align: center; padding: 20px; border-bottom: 2px solid #333; background: #f8f9fa; }
+        .school-name { font-size: 24px; font-weight: bold; margin-bottom: 5px; color: #1a365d; }
+        .school-affiliation { font-size: 14px; margin-bottom: 5px; color: #666; }
+        .school-address { font-size: 12px; color: #666; }
+        .receipt-title { font-size: 20px; font-weight: bold; margin: 15px 0; text-decoration: underline; }
+        .receipt-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; border-bottom: 1px solid #ddd; }
+        .receipt-info-item { margin-bottom: 8px; }
+        .receipt-info-label { font-weight: bold; display: inline-block; width: 140px; }
+        .student-info { padding: 20px; border-bottom: 1px solid #ddd; }
+        .fee-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .fee-table th, .fee-table td { border: 1px solid #333; padding: 10px; text-align: left; }
+        .fee-table th { background: #f0f0f0; font-weight: bold; }
+        .fee-table .amount { text-align: right; }
+        .total-row { font-weight: bold; background: #f8f9fa; }
+        .receipt-footer { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .signature-section { text-align: center; }
+        .signature-line { border-top: 1px solid #333; margin-top: 50px; padding-top: 5px; font-size: 12px; }
+        .contact-info { font-size: 11px; text-align: center; padding: 15px; background: #f8f9fa; border-top: 1px solid #ddd; }
+        .currency-symbol { font-weight: bold; }
+        @media (max-width: 1200px) { .main-container { grid-template-columns: 1fr; gap: 20px; } }
+        @media (max-width: 768px) { .form-row, .form-row-triple { grid-template-columns: 1fr; } .fee-item { grid-template-columns: 1fr; } .receipt-info { grid-template-columns: 1fr; } .receipt-footer { grid-template-columns: 1fr; gap: 20px; } }
+        @media print { body { background: white; padding: 0; } .main-container { display: block; } .form-section { display: none; } .preview-section { box-shadow: none; border-radius: 0; padding: 0; } .receipt { border: 2px solid #000; max-width: none; } }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <!-- Form Section -->
         <div class="form-section">
             <h1>📄 Tuition Fee Receipt Generator</h1>
             
-            <!-- School Template Selection -->
             <div class="section-title">🏫 School Template</div>
             <div class="form-group">
                 <label for="schoolTemplate">Select School Type:</label>
-                <select id="schoolTemplate">
+                <select id="schoolTemplate" onchange="updateSchoolTemplate()">
                     <option value="high-school-cbse">High School (CBSE)</option>
                     <option value="high-school-icse">High School (ICSE)</option>
                     <option value="high-school-state">High School (State Board)</option>
@@ -367,31 +70,29 @@
                 </select>
             </div>
 
-            <!-- School Information -->
             <div class="section-title">🏛️ School Information</div>
             <div class="form-group">
                 <label for="schoolName">School Name:</label>
-                <input type="text" id="schoolName" placeholder="Enter school name" value="Prerana High School">
+                <input type="text" id="schoolName" placeholder="Enter school name" value="Prerana High School" onchange="generateReceipt()">
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label for="schoolAffiliation">Affiliation:</label>
-                    <input type="text" id="schoolAffiliation" placeholder="e.g., CBSE, ICSE" value="Affiliated to CBSE, New Delhi">
+                    <input type="text" id="schoolAffiliation" placeholder="e.g., CBSE, ICSE" value="Affiliated to CBSE, New Delhi" onchange="generateReceipt()">
                 </div>
                 <div class="form-group">
                     <label for="schoolCode">School Code:</label>
-                    <input type="text" id="schoolCode" placeholder="School code" value="30189">
+                    <input type="text" id="schoolCode" placeholder="School code" value="30189" onchange="generateReceipt()">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="schoolAddress">School Address:</label>
-                <textarea id="schoolAddress" rows="3" placeholder="Enter complete school address">123 Education Street, Knowledge City, State - 123456
+                <textarea id="schoolAddress" rows="3" placeholder="Enter complete school address" onchange="generateReceipt()">123 Education Street, Knowledge City, State - 123456
 Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
             </div>
 
-            <!-- Receipt Information -->
             <div class="section-title">📋 Receipt Information</div>
             <div class="form-row-triple">
                 <div class="form-group">
@@ -400,11 +101,11 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 </div>
                 <div class="form-group">
                     <label for="receiptDate">Receipt Date:</label>
-                    <input type="date" id="receiptDate">
+                    <input type="date" id="receiptDate" onchange="generateReceipt()">
                 </div>
                 <div class="form-group">
                     <label for="academicYear">Academic Year:</label>
-                    <select id="academicYear">
+                    <select id="academicYear" onchange="generateReceipt()">
                         <option value="2024-25">2024-25</option>
                         <option value="2023-24">2023-24</option>
                         <option value="2022-23">2022-23</option>
@@ -412,23 +113,22 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 </div>
             </div>
 
-            <!-- Student Information -->
             <div class="section-title">👨‍🎓 Student Information</div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="studentName">Student Name:</label>
-                    <input type="text" id="studentName" placeholder="Enter student name" required>
+                    <input type="text" id="studentName" placeholder="Enter student name" required onchange="generateReceipt()">
                 </div>
                 <div class="form-group">
                     <label for="admissionNumber">Admission Number:</label>
-                    <input type="text" id="admissionNumber" placeholder="Admission number" required>
+                    <input type="text" id="admissionNumber" placeholder="Admission number" required onchange="generateReceipt()">
                 </div>
             </div>
 
             <div class="form-row-triple">
                 <div class="form-group">
                     <label for="className">Class:</label>
-                    <select id="className">
+                    <select id="className" onchange="generateReceipt()">
                         <option value="">Select Class</option>
                         <option value="Pre-KG">Pre-KG</option>
                         <option value="LKG">LKG</option>
@@ -449,19 +149,18 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 </div>
                 <div class="form-group">
                     <label for="section">Section:</label>
-                    <input type="text" id="section" placeholder="Section" maxlength="2">
+                    <input type="text" id="section" placeholder="Section" maxlength="2" onchange="generateReceipt()">
                 </div>
                 <div class="form-group">
                     <label for="rollNumber">Roll Number:</label>
-                    <input type="text" id="rollNumber" placeholder="Roll number">
+                    <input type="text" id="rollNumber" placeholder="Roll number" onchange="generateReceipt()">
                 </div>
             </div>
 
-            <!-- Fee Details -->
             <div class="section-title">💰 Fee Details</div>
             <div class="form-group">
                 <label for="currency">Currency:</label>
-                <select id="currency">
+                <select id="currency" onchange="updateCurrencySymbol()">
                     <option value="INR">₹ Indian Rupee (INR)</option>
                     <option value="USD">$ US Dollar (USD)</option>
                     <option value="GBP">£ British Pound (GBP)</option>
@@ -470,21 +169,18 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 </select>
             </div>
 
-            <div id="feeItems">
-                <!-- Fee items will be dynamically added here -->
-            </div>
+            <div id="feeItems"></div>
 
             <div class="btn-group">
                 <button type="button" class="btn btn-secondary" onclick="addFeeItem()">+ Add Fee Item</button>
                 <button type="button" class="btn btn-secondary" onclick="clearAllFees()">Clear All</button>
             </div>
 
-            <!-- Payment Information -->
             <div class="section-title">💳 Payment Information</div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="paymentMode">Payment Mode:</label>
-                    <select id="paymentMode">
+                    <select id="paymentMode" onchange="generateReceipt()">
                         <option value="Cash">Cash</option>
                         <option value="Cheque">Cheque</option>
                         <option value="Online Transfer">Online Transfer</option>
@@ -496,22 +192,21 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 </div>
                 <div class="form-group">
                     <label for="transactionId">Transaction ID / Cheque No:</label>
-                    <input type="text" id="transactionId" placeholder="Transaction ID or Cheque Number">
+                    <input type="text" id="transactionId" placeholder="Transaction ID or Cheque Number" onchange="generateReceipt()">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="bankName">Bank Name:</label>
-                    <input type="text" id="bankName" placeholder="Bank name (if applicable)">
+                    <input type="text" id="bankName" placeholder="Bank name (if applicable)" onchange="generateReceipt()">
                 </div>
                 <div class="form-group">
                     <label for="paymentDate">Payment Date:</label>
-                    <input type="date" id="paymentDate">
+                    <input type="date" id="paymentDate" onchange="generateReceipt()">
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="btn-group">
                 <button type="button" class="btn btn-primary" onclick="generateReceipt()">🔄 Generate Receipt</button>
                 <button type="button" class="btn btn-success" onclick="downloadPDF()">📥 Download PDF</button>
@@ -521,7 +216,6 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
             </div>
         </div>
 
-        <!-- Preview Section -->
         <div class="preview-section">
             <div id="receiptPreview">
                 <div class="receipt">
@@ -624,81 +318,33 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
     <script>
         var feeItemCount = 0;
         var receiptCounter = 1;
-        var currencySymbols = {
-            'INR': '₹',
-            'USD': '$',
-            'GBP': '£',
-            'AUD': 'A$',
-            'EUR': '€'
-        };
+        var currencySymbols = { 'INR': '₹', 'USD': '$', 'GBP': '£', 'AUD': 'A$', 'EUR': '€' };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
-
-        function initializeApp() {
+        window.onload = function() {
             var today = new Date().toISOString().split('T')[0];
             document.getElementById('receiptDate').value = today;
             document.getElementById('paymentDate').value = today;
-            
             generateReceiptNumber();
-            
             addFeeItem('Tuition Fee', '');
             addFeeItem('Development Fee', '');
-            
-            setupEventListeners();
-            loadSavedData();
             generateReceipt();
-        }
-
-        function setupEventListeners() {
-            var inputs = document.querySelectorAll('input, select, textarea');
-            for (var i = 0; i < inputs.length; i++) {
-                inputs[i].addEventListener('input', generateReceipt);
-                inputs[i].addEventListener('change', generateReceipt);
-            }
-
-            document.getElementById('schoolTemplate').addEventListener('change', updateSchoolTemplate);
-            document.getElementById('currency').addEventListener('change', updateCurrencySymbol);
-        }
+        };
 
         function generateReceiptNumber() {
             var year = new Date().getFullYear();
             var number = String(receiptCounter).padStart(3, '0');
-            var receiptNumber = 'TFR' + year + number;
-            document.getElementById('receiptNumber').value = receiptNumber;
+            document.getElementById('receiptNumber').value = 'TFR' + year + number;
             receiptCounter++;
         }
 
         function updateSchoolTemplate() {
             var template = document.getElementById('schoolTemplate').value;
             var templates = {
-                'high-school-cbse': {
-                    name: 'Prerana High School',
-                    affiliation: 'Affiliated to CBSE, New Delhi',
-                    code: '30189',
-                    address: '123 Education Street, Knowledge City, State - 123456\nPhone: +91 98765 43210 | Email: info@prerana.edu.in'
-                },
-                'high-school-icse': {
-                    name: 'St. Mary ICSE School',
-                    affiliation: 'Affiliated to ICSE, New Delhi',
-                    code: 'IC4567',
-                    address: '456 Learning Avenue, Education Town, State - 654321\nPhone: +91 87654 32109 | Email: admin@stmarys.edu.in'
-                },
-                'college': {
-                    name: 'Knowledge University College',
-                    affiliation: 'Affiliated to State University',
-                    code: 'CU2024',
-                    address: 'University Campus, Academic City, State - 456789\nPhone: +91 65432 10987 | Email: admissions@knowledge.edu.in'
-                },
-                'custom': {
-                    name: '',
-                    affiliation: '',
-                    code: '',
-                    address: ''
-                }
+                'high-school-cbse': { name: 'Prerana High School', affiliation: 'Affiliated to CBSE, New Delhi', code: '30189', address: '123 Education Street, Knowledge City, State - 123456\nPhone: +91 98765 43210 | Email: info@prerana.edu.in' },
+                'high-school-icse': { name: 'St. Mary ICSE School', affiliation: 'Affiliated to ICSE, New Delhi', code: 'IC4567', address: '456 Learning Avenue, Education Town, State - 654321\nPhone: +91 87654 32109 | Email: admin@stmarys.edu.in' },
+                'college': { name: 'Knowledge University College', affiliation: 'Affiliated to State University', code: 'CU2024', address: 'University Campus, Academic City, State - 456789\nPhone: +91 65432 10987 | Email: admissions@knowledge.edu.in' },
+                'custom': { name: '', affiliation: '', code: '', address: '' }
             };
-
             var selectedTemplate = templates[template];
             if (selectedTemplate) {
                 document.getElementById('schoolName').value = selectedTemplate.name;
@@ -723,22 +369,9 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 var selected = defaultName === feeTypes[i] ? ' selected' : '';
                 selectOptions += '<option value="' + feeTypes[i] + '"' + selected + '>' + feeTypes[i] + '</option>';
             }
-            var customSelected = isCustom ? ' selected' : '';
-            selectOptions += '<option value="Custom"' + customSelected + '>Custom</option>';
+            selectOptions += '<option value="Custom"' + (isCustom ? ' selected' : '') + '>Custom</option>';
             
-            feeItemDiv.innerHTML = 
-                '<div class="form-group">' +
-                    '<label>Fee Type:</label>' +
-                    '<select class="fee-type" onchange="generateReceipt(); toggleCustomName(this)">' +
-                        selectOptions +
-                    '</select>' +
-                    '<input type="text" class="custom-fee-name" placeholder="Enter custom fee name" style="display: ' + (isCustom ? 'block' : 'none') + '; margin-top: 10px;" value="' + (isCustom ? defaultName : '') + '" oninput="generateReceipt()">' +
-                '</div>' +
-                '<div class="form-group">' +
-                    '<label>Amount:</label>' +
-                    '<input type="number" class="fee-amount" placeholder="0.00" step="0.01" min="0" value="' + defaultAmount + '" oninput="generateReceipt()">' +
-                    '<button type="button" class="btn btn-secondary" onclick="removeFeeItem(' + feeItemCount + ')" style="margin-top: 10px; padding: 5px 10px; font-size: 12px;">Remove</button>' +
-                '</div>';
+            feeItemDiv.innerHTML = '<div class="form-group"><label>Fee Type:</label><select class="fee-type" onchange="generateReceipt(); toggleCustomName(this)">' + selectOptions + '</select><input type="text" class="custom-fee-name" placeholder="Enter custom fee name" style="display: ' + (isCustom ? 'block' : 'none') + '; margin-top: 10px;" value="' + (isCustom ? defaultName : '') + '" oninput="generateReceipt()"></div><div class="form-group"><label>Amount:</label><input type="number" class="fee-amount" placeholder="0.00" step="0.01" min="0" value="' + defaultAmount + '" oninput="generateReceipt()"><button type="button" class="btn btn-secondary" onclick="removeFeeItem(' + feeItemCount + ')" style="margin-top: 10px; padding: 5px 10px; font-size: 12px;">Remove</button></div>';
             
             feeItemsContainer.appendChild(feeItemDiv);
             feeItemCount++;
@@ -780,63 +413,40 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
         }
 
         function generateReceipt() {
-            try {
-                updatePreviewData();
-                updateFeeTable();
-                updateTotalAmount();
-            } catch (error) {
-                console.error('Error generating receipt:', error);
-            }
+            updatePreviewData();
+            updateFeeTable();
+            updateTotalAmount();
         }
 
         function updatePreviewData() {
-            document.getElementById('previewSchoolName').textContent = 
-                document.getElementById('schoolName').value || 'School Name';
-            document.getElementById('previewAffiliation').textContent = 
-                document.getElementById('schoolAffiliation').value || 'School Affiliation';
-            document.getElementById('previewAddress').textContent = 
-                document.getElementById('schoolAddress').value || 'School Address';
-
-            document.getElementById('previewReceiptNumber').textContent = 
-                document.getElementById('receiptNumber').value || 'TFR2024001';
-            document.getElementById('previewDate').textContent = 
-                formatDate(document.getElementById('receiptDate').value) || '-';
-            document.getElementById('previewAcademicYear').textContent = 
-                document.getElementById('academicYear').value || '2024-25';
-
-            document.getElementById('previewStudentName').textContent = 
-                document.getElementById('studentName').value || '-';
-            document.getElementById('previewAdmissionNumber').textContent = 
-                document.getElementById('admissionNumber').value || '-';
+            document.getElementById('previewSchoolName').textContent = document.getElementById('schoolName').value || 'School Name';
+            document.getElementById('previewAffiliation').textContent = document.getElementById('schoolAffiliation').value || 'School Affiliation';
+            document.getElementById('previewAddress').textContent = document.getElementById('schoolAddress').value || 'School Address';
+            document.getElementById('previewReceiptNumber').textContent = document.getElementById('receiptNumber').value || 'TFR2024001';
+            document.getElementById('previewDate').textContent = formatDate(document.getElementById('receiptDate').value) || '-';
+            document.getElementById('previewAcademicYear').textContent = document.getElementById('academicYear').value || '2024-25';
+            document.getElementById('previewStudentName').textContent = document.getElementById('studentName').value || '-';
+            document.getElementById('previewAdmissionNumber').textContent = document.getElementById('admissionNumber').value || '-';
             
             var className = document.getElementById('className').value;
             var section = document.getElementById('section').value;
-            document.getElementById('previewClass').textContent = 
-                className ? className + (section ? ' - ' + section : '') : '-';
+            document.getElementById('previewClass').textContent = className ? className + (section ? ' - ' + section : '') : '-';
             
-            document.getElementById('previewRollNumber').textContent = 
-                document.getElementById('rollNumber').value || '-';
-
-            document.getElementById('previewPaymentMode').textContent = 
-                document.getElementById('paymentMode').value || 'Cash';
-            document.getElementById('previewTransactionId').textContent = 
-                document.getElementById('transactionId').value || '-';
-            document.getElementById('previewBank').textContent = 
-                document.getElementById('bankName').value || '-';
+            document.getElementById('previewRollNumber').textContent = document.getElementById('rollNumber').value || '-';
+            document.getElementById('previewPaymentMode').textContent = document.getElementById('paymentMode').value || 'Cash';
+            document.getElementById('previewTransactionId').textContent = document.getElementById('transactionId').value || '-';
+            document.getElementById('previewBank').textContent = document.getElementById('bankName').value || '-';
 
             var address = document.getElementById('schoolAddress').value;
             var contactMatch = address.match(/Phone:.*|Email:.*/g);
             if (contactMatch) {
-                document.getElementById('previewContactInfo').innerHTML = 
-                    contactMatch.join(' | ') + '<br>This is a computer-generated receipt.';
+                document.getElementById('previewContactInfo').innerHTML = contactMatch.join(' | ') + '<br>This is a computer-generated receipt.';
             }
         }
 
         function updateFeeTable() {
-            var feeItemsContainer = document.getElementById('feeItems');
-            var feeItems = feeItemsContainer.querySelectorAll('.fee-item');
+            var feeItems = document.querySelectorAll('.fee-item');
             var previewFeeItems = document.getElementById('previewFeeItems');
-            
             var tableRows = '';
             var serialNumber = 1;
             
@@ -854,11 +464,7 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 var amount = parseFloat(amountInput.value) || 0;
                 
                 if (feeName && feeName !== 'Custom' && amount > 0) {
-                    tableRows += '<tr>' +
-                        '<td>' + serialNumber + '</td>' +
-                        '<td>' + feeName + '</td>' +
-                        '<td class="amount">' + formatCurrency(amount) + '</td>' +
-                        '</tr>';
+                    tableRows += '<tr><td>' + serialNumber + '</td><td>' + feeName + '</td><td class="amount">' + formatCurrency(amount) + '</td></tr>';
                     serialNumber++;
                 }
             }
@@ -871,8 +477,7 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
         }
 
         function updateTotalAmount() {
-            var feeItemsContainer = document.getElementById('feeItems');
-            var feeItems = feeItemsContainer.querySelectorAll('.fee-item');
+            var feeItems = document.querySelectorAll('.fee-item');
             var total = 0;
             
             for (var i = 0; i < feeItems.length; i++) {
@@ -897,49 +502,15 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
         function formatDate(dateString) {
             if (!dateString) return '';
             var date = new Date(dateString);
-            return date.toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
+            return date.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
         function downloadPDF() {
-            var receiptContent = document.getElementById('receiptPreview').innerHTML;
-            var printWindow = window.open('', '_blank');
-            
-            var htmlContent = '<!DOCTYPE html><html><head><title>Tuition Fee Receipt</title>' +
-                '<style>body{font-family:"Times New Roman",serif;margin:0;padding:20px;}' +
-                '.receipt{background:white;border:2px solid #333;font-size:14px;line-height:1.4;color:#000;}' +
-                '.receipt-header{text-align:center;padding:20px;border-bottom:2px solid #333;background:#f8f9fa;}' +
-                '.school-name{font-size:24px;font-weight:bold;margin-bottom:5px;color:#1a365d;}' +
-                '.school-affiliation{font-size:14px;margin-bottom:5px;color:#666;}' +
-                '.school-address{font-size:12px;color:#666;}' +
-                '.receipt-title{font-size:20px;font-weight:bold;margin:15px 0;text-decoration:underline;}' +
-                '.receipt-info{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px;border-bottom:1px solid #ddd;}' +
-                '.receipt-info-item{margin-bottom:8px;}' +
-                '.receipt-info-label{font-weight:bold;display:inline-block;width:140px;}' +
-                '.student-info{padding:20px;border-bottom:1px solid #ddd;}' +
-                '.fee-table{width:100%;border-collapse:collapse;margin:20px 0;}' +
-                '.fee-table th,.fee-table td{border:1px solid #333;padding:10px;text-align:left;}' +
-                '.fee-table th{background:#f0f0f0;font-weight:bold;}' +
-                '.fee-table .amount{text-align:right;}' +
-                '.total-row{font-weight:bold;background:#f8f9fa;}' +
-                '.receipt-footer{padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}' +
-                '.signature-section{text-align:center;}' +
-                '.signature-line{border-top:1px solid #333;margin-top:50px;padding-top:5px;font-size:12px;}' +
-                '.contact-info{font-size:11px;text-align:center;padding:15px;background:#f8f9fa;border-top:1px solid #ddd;}' +
-                '.currency-symbol{font-weight:bold;}' +
-                '</style></head><body>' + receiptContent + 
-                '<script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};};</script>' +
-                '</body></html>';
-            
-            printWindow.document.write(htmlContent);
-            printWindow.document.close();
+            window.print();
         }
 
         function printReceipt() {
-            downloadPDF();
+            window.print();
         }
 
         function saveData() {
@@ -971,68 +542,41 @@ Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
                 var feeType = feeItem.querySelector('.fee-type').value;
                 var customName = feeItem.querySelector('.custom-fee-name').value;
                 var amount = feeItem.querySelector('.fee-amount').value;
-                
-                formData.feeItems.push({
-                    type: feeType,
-                    customName: customName,
-                    amount: amount
-                });
+                formData.feeItems.push({ type: feeType, customName: customName, amount: amount });
             }
 
             localStorage.setItem('tuitionReceiptData', JSON.stringify(formData));
             localStorage.setItem('receiptCounter', receiptCounter.toString());
-            
             alert('Data saved successfully!');
         }
 
         function loadData() {
             var savedData = localStorage.getItem('tuitionReceiptData');
-            var savedCounter = localStorage.getItem('receiptCounter');
-            
             if (savedData) {
                 try {
                     var formData = JSON.parse(savedData);
-                    
                     var keys = Object.keys(formData);
                     for (var i = 0; i < keys.length; i++) {
                         var key = keys[i];
                         if (key !== 'feeItems') {
                             var element = document.getElementById(key);
-                            if (element) {
-                                element.value = formData[key];
-                            }
+                            if (element) element.value = formData[key];
                         }
                     }
-
                     document.getElementById('feeItems').innerHTML = '';
                     feeItemCount = 0;
-                    
                     for (var j = 0; j < formData.feeItems.length; j++) {
                         var item = formData.feeItems[j];
                         var feeName = item.type === 'Custom' ? item.customName : item.type;
                         addFeeItem(feeName, item.amount);
                     }
-
-                    if (savedCounter) {
-                        receiptCounter = parseInt(savedCounter);
-                    }
-
                     generateReceipt();
                     alert('Data loaded successfully!');
                 } catch (error) {
                     alert('Error loading saved data.');
-                    console.error('Load error:', error);
                 }
             } else {
                 alert('No saved data found.');
-            }
-        }
-
-        function loadSavedData() {
-            var savedCounter = localStorage.getItem('receiptCounter');
-            if (savedCounter) {
-                receiptCounter = parseInt(savedCounter);
-                generateReceiptNumber();
             }
         }
     </script>
