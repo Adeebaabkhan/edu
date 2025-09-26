@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Receipt Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-section { float: left; width: 40%; }
+        .preview-section { float: right; width: 55%; }
+        input, select { width: 100%; padding: 8px; margin: 5px 0; }
+        .receipt { border: 2px solid #333; padding: 20px; font-family: 'Times New Roman', serif; }
+        .school-name { font-size: 24px; font-weight: bold; text-align: center; }
+        .btn { padding: 10px 15px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="form-section">
+        <h2>Receipt Generator</h2>
+        <input type="text" id="studentName" placeholder="Student Name">
+        <input type="text" id="amount" placeholder="Amount">
+        <button class="btn" onclick="updateReceipt()">Update Receipt</button>
+    </div>
+    
+    <div class="preview-section">
+        <div class="receipt">
+            <div class="school-name">Prerana High School</div>
+            <p>Student: <span id="previewStudent">-</span></p>
+            <p>Amount: ₹<span id="previewAmount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        function updateReceipt() {
+            var student = document.getElementById('studentName').value;
+            var amount = document.getElementById('amount').value;
+            
+            document.getElementById('previewStudent').textContent = student || '-';
+            document.getElementById('previewAmount').textContent = amount || '0';
+        }
+    </script>
+</body>
+</html>

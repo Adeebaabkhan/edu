@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuition Fee Receipt Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .main-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-height: calc(100vh - 40px); }
+        .form-section, .preview-section { background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); padding: 30px; overflow-y: auto; }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; font-size: 2.5em; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 14px; transition: all 0.3s ease; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-row-triple { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .section-title { font-size: 1.3em; font-weight: 700; color: #333; margin: 25px 0 15px 0; padding-bottom: 8px; border-bottom: 3px solid #667eea; }
+        .fee-item { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; align-items: end; margin-bottom: 15px; padding: 15px; background: #f8f9ff; border-radius: 8px; border-left: 4px solid #667eea; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin: 5px; }
+        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; transform: translateY(-2px); }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; transform: translateY(-2px); }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+        .receipt { background: white; border: 2px solid #333; font-family: 'Times New Roman', serif; font-size: 14px; line-height: 1.4; color: #000; max-width: 800px; margin: 0 auto; }
+        .receipt-header { text-align: center; padding: 20px; border-bottom: 2px solid #333; background: #f8f9fa; }
+        .school-name { font-size: 24px; font-weight: bold; margin-bottom: 5px; color: #1a365d; }
+        .school-affiliation { font-size: 14px; margin-bottom: 5px; color: #666; }
+        .school-address { font-size: 12px; color: #666; }
+        .receipt-title { font-size: 20px; font-weight: bold; margin: 15px 0; text-decoration: underline; }
+        .receipt-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; border-bottom: 1px solid #ddd; }
+        .receipt-info-item { margin-bottom: 8px; }
+        .receipt-info-label { font-weight: bold; display: inline-block; width: 140px; }
+        .student-info { padding: 20px; border-bottom: 1px solid #ddd; }
+        .fee-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .fee-table th, .fee-table td { border: 1px solid #333; padding: 10px; text-align: left; }
+        .fee-table th { background: #f0f0f0; font-weight: bold; }
+        .fee-table .amount { text-align: right; }
+        .total-row { font-weight: bold; background: #f8f9fa; }
+        .receipt-footer { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .signature-section { text-align: center; }
+        .signature-line { border-top: 1px solid #333; margin-top: 50px; padding-top: 5px; font-size: 12px; }
+        .contact-info { font-size: 11px; text-align: center; padding: 15px; background: #f8f9fa; border-top: 1px solid #ddd; }
+        .currency-symbol { font-weight: bold; }
+        @media (max-width: 1200px) { .main-container { grid-template-columns: 1fr; gap: 20px; } }
+        @media (max-width: 768px) { .form-row, .form-row-triple { grid-template-columns: 1fr; } .fee-item { grid-template-columns: 1fr; } .receipt-info { grid-template-columns: 1fr; } .receipt-footer { grid-template-columns: 1fr; gap: 20px; } }
+        @media print { body { background: white; padding: 0; } .main-container { display: block; } .form-section { display: none; } .preview-section { box-shadow: none; border-radius: 0; padding: 0; } .receipt { border: 2px solid #000; max-width: none; } }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="form-section">
+            <h1>📄 Tuition Fee Receipt Generator</h1>
+            
+            <div class="section-title">🏫 School Template</div>
+            <div class="form-group">
+                <label for="schoolTemplate">Select School Type:</label>
+                <select id="schoolTemplate" onchange="updateSchoolTemplate()">
+                    <option value="high-school-cbse">High School (CBSE)</option>
+                    <option value="high-school-icse">High School (ICSE)</option>
+                    <option value="high-school-state">High School (State Board)</option>
+                    <option value="college">College/University</option>
+                    <option value="coaching">Coaching Center</option>
+                    <option value="international">International School</option>
+                    <option value="custom">Custom School</option>
+                </select>
+            </div>
+
+            <div class="section-title">🏛️ School Information</div>
+            <div class="form-group">
+                <label for="schoolName">School Name:</label>
+                <input type="text" id="schoolName" placeholder="Enter school name" value="Prerana High School" onchange="generateReceipt()">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="schoolAffiliation">Affiliation:</label>
+                    <input type="text" id="schoolAffiliation" placeholder="e.g., CBSE, ICSE" value="Affiliated to CBSE, New Delhi" onchange="generateReceipt()">
+                </div>
+                <div class="form-group">
+                    <label for="schoolCode">School Code:</label>
+                    <input type="text" id="schoolCode" placeholder="School code" value="30189" onchange="generateReceipt()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="schoolAddress">School Address:</label>
+                <textarea id="schoolAddress" rows="3" placeholder="Enter complete school address" onchange="generateReceipt()">123 Education Street, Knowledge City, State - 123456
+Phone: +91 98765 43210 | Email: info@prerana.edu.in</textarea>
+            </div>
+
+            <div class="section-title">📋 Receipt Information</div>
+            <div class="form-row-triple">
+                <div class="form-group">
+                    <label for="receiptNumber">Receipt Number:</label>
+                    <input type="text" id="receiptNumber" placeholder="Auto-generated" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="receiptDate">Receipt Date:</label>
+                    <input type="date" id="receiptDate" onchange="generateReceipt()">
+                </div>
+                <div class="form-group">
+                    <label for="academicYear">Academic Year:</label>
+                    <select id="academicYear" onchange="generateReceipt()">
+                        <option value="2024-25">2024-25</option>
+                        <option value="2023-24">2023-24</option>
+                        <option value="2022-23">2022-23</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-title">👨‍🎓 Student Information</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentName">Student Name:</label>
+                    <input type="text" id="studentName" placeholder="Enter student name" required onchange="generateReceipt()">
+                </div>
+                <div class="form-group">
+                    <label for="admissionNumber">Admission Number:</label>
+                    <input type="text" id="admissionNumber" placeholder="Admission number" required onchange="generateReceipt()">
+                </div>
+            </div>
+
+            <div class="form-row-triple">
+                <div class="form-group">
+                    <label for="className">Class:</label>
+                    <select id="className" onchange="generateReceipt()">
+                        <option value="">Select Class</option>
+                        <option value="Pre-KG">Pre-KG</option>
+                        <option value="LKG">LKG</option>
+                        <option value="UKG">UKG</option>
+                        <option value="I">Class I</option>
+                        <option value="II">Class II</option>
+                        <option value="III">Class III</option>
+                        <option value="IV">Class IV</option>
+                        <option value="V">Class V</option>
+                        <option value="VI">Class VI</option>
+                        <option value="VII">Class VII</option>
+                        <option value="VIII">Class VIII</option>
+                        <option value="IX">Class IX</option>
+                        <option value="X">Class X</option>
+                        <option value="XI">Class XI</option>
+                        <option value="XII">Class XII</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="section">Section:</label>
+                    <input type="text" id="section" placeholder="Section" maxlength="2" onchange="generateReceipt()">
+                </div>
+                <div class="form-group">
+                    <label for="rollNumber">Roll Number:</label>
+                    <input type="text" id="rollNumber" placeholder="Roll number" onchange="generateReceipt()">
+                </div>
+            </div>
+
+            <div class="section-title">💰 Fee Details</div>
+            <div class="form-group">
+                <label for="currency">Currency:</label>
+                <select id="currency" onchange="updateCurrencySymbol()">
+                    <option value="INR">₹ Indian Rupee (INR)</option>
+                    <option value="USD">$ US Dollar (USD)</option>
+                    <option value="GBP">£ British Pound (GBP)</option>
+                    <option value="AUD">A$ Australian Dollar (AUD)</option>
+                    <option value="EUR">€ Euro (EUR)</option>
+                </select>
+            </div>
+
+            <div id="feeItems"></div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="addFeeItem()">+ Add Fee Item</button>
+                <button type="button" class="btn btn-secondary" onclick="clearAllFees()">Clear All</button>
+            </div>
+
+            <div class="section-title">💳 Payment Information</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="paymentMode">Payment Mode:</label>
+                    <select id="paymentMode" onchange="generateReceipt()">
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Online Transfer">Online Transfer</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Draft">Bank Draft</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionId">Transaction ID / Cheque No:</label>
+                    <input type="text" id="transactionId" placeholder="Transaction ID or Cheque Number" onchange="generateReceipt()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bankName">Bank Name:</label>
+                    <input type="text" id="bankName" placeholder="Bank name (if applicable)" onchange="generateReceipt()">
+                </div>
+                <div class="form-group">
+                    <label for="paymentDate">Payment Date:</label>
+                    <input type="date" id="paymentDate" onchange="generateReceipt()">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="generateReceipt()">🔄 Generate Receipt</button>
+                <button type="button" class="btn btn-success" onclick="downloadPDF()">📥 Download PDF</button>
+                <button type="button" class="btn btn-secondary" onclick="printReceipt()">🖨️ Print</button>
+                <button type="button" class="btn btn-secondary" onclick="saveData()">💾 Save Data</button>
+                <button type="button" class="btn btn-secondary" onclick="loadData()">📂 Load Data</button>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <div id="receiptPreview">
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <div class="school-name" id="previewSchoolName">Prerana High School</div>
+                        <div class="school-affiliation" id="previewAffiliation">Affiliated to CBSE, New Delhi</div>
+                        <div class="school-address" id="previewAddress">123 Education Street, Knowledge City, State - 123456</div>
+                        <div class="receipt-title">TUITION FEE RECEIPT</div>
+                    </div>
+
+                    <div class="receipt-info">
+                        <div>
+                            <div class="receipt-info-item">
+                                <span class="receipt-info-label">Receipt No:</span>
+                                <span id="previewReceiptNumber">TFR2024001</span>
+                            </div>
+                            <div class="receipt-info-item">
+                                <span class="receipt-info-label">Date:</span>
+                                <span id="previewDate">-</span>
+                            </div>
+                            <div class="receipt-info-item">
+                                <span class="receipt-info-label">Academic Year:</span>
+                                <span id="previewAcademicYear">2024-25</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="receipt-info-item">
+                                <span class="receipt-info-label">Payment Mode:</span>
+                                <span id="previewPaymentMode">Cash</span>
+                            </div>
+                            <div class="receipt-info-item">
+                                <span class="receipt-info-label">Transaction ID:</span>
+                                <span id="previewTransactionId">-</span>
+                            </div>
+                            <div class="receipt-info-item">
+                                <span class="receipt-info-label">Bank:</span>
+                                <span id="previewBank">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="student-info">
+                        <div class="receipt-info-item">
+                            <span class="receipt-info-label">Student Name:</span>
+                            <span id="previewStudentName">-</span>
+                        </div>
+                        <div class="receipt-info-item">
+                            <span class="receipt-info-label">Admission No:</span>
+                            <span id="previewAdmissionNumber">-</span>
+                        </div>
+                        <div class="receipt-info-item">
+                            <span class="receipt-info-label">Class:</span>
+                            <span id="previewClass">-</span>
+                        </div>
+                        <div class="receipt-info-item">
+                            <span class="receipt-info-label">Roll Number:</span>
+                            <span id="previewRollNumber">-</span>
+                        </div>
+                    </div>
+
+                    <table class="fee-table">
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Particulars</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewFeeItems">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: #666;">No fee items added yet</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="2"><strong>Total Amount</strong></td>
+                                <td class="amount"><strong><span class="currency-symbol">₹</span> <span id="previewTotal">0.00</span></strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="receipt-footer">
+                        <div class="signature-section">
+                            <div class="signature-line">Cashier Signature</div>
+                        </div>
+                        <div class="signature-section">
+                            <div class="signature-line">Principal Signature</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-info" id="previewContactInfo">
+                        Phone: +91 98765 43210 | Email: info@prerana.edu.in<br>
+                        This is a computer-generated receipt.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var feeItemCount = 0;
+        var receiptCounter = 1;
+        var currencySymbols = { 'INR': '₹', 'USD': '$', 'GBP': '£', 'AUD': 'A$', 'EUR': '€' };
+
+        window.onload = function() {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('receiptDate').value = today;
+            document.getElementById('paymentDate').value = today;
+            generateReceiptNumber();
+            addFeeItem('Tuition Fee', '');
+            addFeeItem('Development Fee', '');
+            generateReceipt();
+        };
+
+        function generateReceiptNumber() {
+            var year = new Date().getFullYear();
+            var number = String(receiptCounter).padStart(3, '0');
+            document.getElementById('receiptNumber').value = 'TFR' + year + number;
+            receiptCounter++;
+        }
+
+        function updateSchoolTemplate() {
+            var template = document.getElementById('schoolTemplate').value;
+            var templates = {
+                'high-school-cbse': { name: 'Prerana High School', affiliation: 'Affiliated to CBSE, New Delhi', code: '30189', address: '123 Education Street, Knowledge City, State - 123456\nPhone: +91 98765 43210 | Email: info@prerana.edu.in' },
+                'high-school-icse': { name: 'St. Mary ICSE School', affiliation: 'Affiliated to ICSE, New Delhi', code: 'IC4567', address: '456 Learning Avenue, Education Town, State - 654321\nPhone: +91 87654 32109 | Email: admin@stmarys.edu.in' },
+                'college': { name: 'Knowledge University College', affiliation: 'Affiliated to State University', code: 'CU2024', address: 'University Campus, Academic City, State - 456789\nPhone: +91 65432 10987 | Email: admissions@knowledge.edu.in' },
+                'custom': { name: '', affiliation: '', code: '', address: '' }
+            };
+            var selectedTemplate = templates[template];
+            if (selectedTemplate) {
+                document.getElementById('schoolName').value = selectedTemplate.name;
+                document.getElementById('schoolAffiliation').value = selectedTemplate.affiliation;
+                document.getElementById('schoolCode').value = selectedTemplate.code;
+                document.getElementById('schoolAddress').value = selectedTemplate.address;
+                generateReceipt();
+            }
+        }
+
+        function addFeeItem(defaultName, defaultAmount) {
+            var feeItemsContainer = document.getElementById('feeItems');
+            var feeItemDiv = document.createElement('div');
+            feeItemDiv.className = 'fee-item';
+            feeItemDiv.id = 'fee-item-' + feeItemCount;
+            
+            var feeTypes = ['Tuition Fee', 'Development Fee', 'Library Fee', 'Sports Fee', 'Transportation Fee', 'Examination Fee', 'Laboratory Fee', 'Activity Fee', 'Miscellaneous Fee', 'Admission Fee', 'Security Deposit', 'Late Fee'];
+            var isCustom = !defaultName || !feeTypes.includes(defaultName);
+            
+            var selectOptions = '';
+            for (var i = 0; i < feeTypes.length; i++) {
+                var selected = defaultName === feeTypes[i] ? ' selected' : '';
+                selectOptions += '<option value="' + feeTypes[i] + '"' + selected + '>' + feeTypes[i] + '</option>';
+            }
+            selectOptions += '<option value="Custom"' + (isCustom ? ' selected' : '') + '>Custom</option>';
+            
+            feeItemDiv.innerHTML = '<div class="form-group"><label>Fee Type:</label><select class="fee-type" onchange="generateReceipt(); toggleCustomName(this)">' + selectOptions + '</select><input type="text" class="custom-fee-name" placeholder="Enter custom fee name" style="display: ' + (isCustom ? 'block' : 'none') + '; margin-top: 10px;" value="' + (isCustom ? defaultName : '') + '" oninput="generateReceipt()"></div><div class="form-group"><label>Amount:</label><input type="number" class="fee-amount" placeholder="0.00" step="0.01" min="0" value="' + defaultAmount + '" oninput="generateReceipt()"><button type="button" class="btn btn-secondary" onclick="removeFeeItem(' + feeItemCount + ')" style="margin-top: 10px; padding: 5px 10px; font-size: 12px;">Remove</button></div>';
+            
+            feeItemsContainer.appendChild(feeItemDiv);
+            feeItemCount++;
+            generateReceipt();
+        }
+
+        function toggleCustomName(selectElement) {
+            var customNameInput = selectElement.parentElement.querySelector('.custom-fee-name');
+            if (selectElement.value === 'Custom') {
+                customNameInput.style.display = 'block';
+                customNameInput.focus();
+            } else {
+                customNameInput.style.display = 'none';
+                customNameInput.value = '';
+            }
+        }
+
+        function removeFeeItem(id) {
+            var feeItem = document.getElementById('fee-item-' + id);
+            if (feeItem) {
+                feeItem.remove();
+                generateReceipt();
+            }
+        }
+
+        function clearAllFees() {
+            if (confirm('Are you sure you want to clear all fee items?')) {
+                document.getElementById('feeItems').innerHTML = '';
+                feeItemCount = 0;
+                generateReceipt();
+            }
+        }
+
+        function updateCurrencySymbol() {
+            var currency = document.getElementById('currency').value;
+            var symbol = currencySymbols[currency] || currency;
+            document.querySelector('.currency-symbol').textContent = symbol;
+            generateReceipt();
+        }
+
+        function generateReceipt() {
+            updatePreviewData();
+            updateFeeTable();
+            updateTotalAmount();
+        }
+
+        function updatePreviewData() {
+            document.getElementById('previewSchoolName').textContent = document.getElementById('schoolName').value || 'School Name';
+            document.getElementById('previewAffiliation').textContent = document.getElementById('schoolAffiliation').value || 'School Affiliation';
+            document.getElementById('previewAddress').textContent = document.getElementById('schoolAddress').value || 'School Address';
+            document.getElementById('previewReceiptNumber').textContent = document.getElementById('receiptNumber').value || 'TFR2024001';
+            document.getElementById('previewDate').textContent = formatDate(document.getElementById('receiptDate').value) || '-';
+            document.getElementById('previewAcademicYear').textContent = document.getElementById('academicYear').value || '2024-25';
+            document.getElementById('previewStudentName').textContent = document.getElementById('studentName').value || '-';
+            document.getElementById('previewAdmissionNumber').textContent = document.getElementById('admissionNumber').value || '-';
+            
+            var className = document.getElementById('className').value;
+            var section = document.getElementById('section').value;
+            document.getElementById('previewClass').textContent = className ? className + (section ? ' - ' + section : '') : '-';
+            
+            document.getElementById('previewRollNumber').textContent = document.getElementById('rollNumber').value || '-';
+            document.getElementById('previewPaymentMode').textContent = document.getElementById('paymentMode').value || 'Cash';
+            document.getElementById('previewTransactionId').textContent = document.getElementById('transactionId').value || '-';
+            document.getElementById('previewBank').textContent = document.getElementById('bankName').value || '-';
+
+            var address = document.getElementById('schoolAddress').value;
+            var contactMatch = address.match(/Phone:.*|Email:.*/g);
+            if (contactMatch) {
+                document.getElementById('previewContactInfo').innerHTML = contactMatch.join(' | ') + '<br>This is a computer-generated receipt.';
+            }
+        }
+
+        function updateFeeTable() {
+            var feeItems = document.querySelectorAll('.fee-item');
+            var previewFeeItems = document.getElementById('previewFeeItems');
+            var tableRows = '';
+            var serialNumber = 1;
+            
+            for (var i = 0; i < feeItems.length; i++) {
+                var feeItem = feeItems[i];
+                var feeTypeSelect = feeItem.querySelector('.fee-type');
+                var customNameInput = feeItem.querySelector('.custom-fee-name');
+                var amountInput = feeItem.querySelector('.fee-amount');
+                
+                var feeName = feeTypeSelect.value;
+                if (feeName === 'Custom' && customNameInput.value.trim()) {
+                    feeName = customNameInput.value.trim();
+                }
+                
+                var amount = parseFloat(amountInput.value) || 0;
+                
+                if (feeName && feeName !== 'Custom' && amount > 0) {
+                    tableRows += '<tr><td>' + serialNumber + '</td><td>' + feeName + '</td><td class="amount">' + formatCurrency(amount) + '</td></tr>';
+                    serialNumber++;
+                }
+            }
+            
+            if (tableRows === '') {
+                previewFeeItems.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #666;">No fee items added yet</td></tr>';
+            } else {
+                previewFeeItems.innerHTML = tableRows;
+            }
+        }
+
+        function updateTotalAmount() {
+            var feeItems = document.querySelectorAll('.fee-item');
+            var total = 0;
+            
+            for (var i = 0; i < feeItems.length; i++) {
+                var amountInput = feeItems[i].querySelector('.fee-amount');
+                var amount = parseFloat(amountInput.value) || 0;
+                total += amount;
+            }
+            
+            document.getElementById('previewTotal').textContent = total.toFixed(2);
+            
+            var currency = document.getElementById('currency').value;
+            var symbol = currencySymbols[currency] || currency;
+            document.querySelector('.currency-symbol').textContent = symbol;
+        }
+
+        function formatCurrency(amount) {
+            var currency = document.getElementById('currency').value;
+            var symbol = currencySymbols[currency] || currency;
+            return symbol + ' ' + amount.toFixed(2);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            var date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function downloadPDF() {
+            window.print();
+        }
+
+        function printReceipt() {
+            window.print();
+        }
+
+        function saveData() {
+            var formData = {
+                schoolTemplate: document.getElementById('schoolTemplate').value,
+                schoolName: document.getElementById('schoolName').value,
+                schoolAffiliation: document.getElementById('schoolAffiliation').value,
+                schoolCode: document.getElementById('schoolCode').value,
+                schoolAddress: document.getElementById('schoolAddress').value,
+                receiptNumber: document.getElementById('receiptNumber').value,
+                receiptDate: document.getElementById('receiptDate').value,
+                academicYear: document.getElementById('academicYear').value,
+                studentName: document.getElementById('studentName').value,
+                admissionNumber: document.getElementById('admissionNumber').value,
+                className: document.getElementById('className').value,
+                section: document.getElementById('section').value,
+                rollNumber: document.getElementById('rollNumber').value,
+                currency: document.getElementById('currency').value,
+                paymentMode: document.getElementById('paymentMode').value,
+                transactionId: document.getElementById('transactionId').value,
+                bankName: document.getElementById('bankName').value,
+                paymentDate: document.getElementById('paymentDate').value,
+                feeItems: []
+            };
+
+            var feeItems = document.querySelectorAll('.fee-item');
+            for (var i = 0; i < feeItems.length; i++) {
+                var feeItem = feeItems[i];
+                var feeType = feeItem.querySelector('.fee-type').value;
+                var customName = feeItem.querySelector('.custom-fee-name').value;
+                var amount = feeItem.querySelector('.fee-amount').value;
+                formData.feeItems.push({ type: feeType, customName: customName, amount: amount });
+            }
+
+            localStorage.setItem('tuitionReceiptData', JSON.stringify(formData));
+            localStorage.setItem('receiptCounter', receiptCounter.toString());
+            alert('Data saved successfully!');
+        }
+
+        function loadData() {
+            var savedData = localStorage.getItem('tuitionReceiptData');
+            if (savedData) {
+                try {
+                    var formData = JSON.parse(savedData);
+                    var keys = Object.keys(formData);
+                    for (var i = 0; i < keys.length; i++) {
+                        var key = keys[i];
+                        if (key !== 'feeItems') {
+                            var element = document.getElementById(key);
+                            if (element) element.value = formData[key];
+                        }
+                    }
+                    document.getElementById('feeItems').innerHTML = '';
+                    feeItemCount = 0;
+                    for (var j = 0; j < formData.feeItems.length; j++) {
+                        var item = formData.feeItems[j];
+                        var feeName = item.type === 'Custom' ? item.customName : item.type;
+                        addFeeItem(feeName, item.amount);
+                    }
+                    generateReceipt();
+                    alert('Data loaded successfully!');
+                } catch (error) {
+                    alert('Error loading saved data.');
+                }
+            } else {
+                alert('No saved data found.');
+            }
+        }
+    </script>
+</body>
+</html>
